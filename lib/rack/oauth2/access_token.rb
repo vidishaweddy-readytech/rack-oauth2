@@ -11,7 +11,11 @@ module Rack
 
       def initialize(attributes = {})
         (required_attributes + optional_attributes).each do |key|
-          self.send :"#{key}=", attributes[key]
+          if key.to_s == 'access_token'
+            self.send :"#{key}=", attributes[key] || attributes['id_token']
+          else
+            self.send :"#{key}=", attributes[key]
+          end
         end
         @raw_attributes = attributes
         @token_type = self.class.name.demodulize.underscore.to_sym
